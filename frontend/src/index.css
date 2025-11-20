@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium;
+  }
+  
+  .btn-success {
+    @apply px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 transition-colors duration-200 text-sm font-medium;
+  }
+  
+  .btn-danger {
+    @apply px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors duration-200 text-sm font-medium;
+  }
+  
+  .btn-warning {
+    @apply px-3 py-1.5 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors duration-200 text-sm font-medium;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+  
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .status-running {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .status-stopped {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .status-failed {
+    @apply bg-red-200 text-red-900;
+  }
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}

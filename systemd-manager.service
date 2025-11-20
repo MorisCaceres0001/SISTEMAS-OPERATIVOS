@@ -1,0 +1,25 @@
+[Unit]
+Description=SystemD Manager Backend API
+Documentation=https://github.com/yourusername/systemd-manager
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/systemd-manager/backend
+Environment=NODE_ENV=production
+Environment=PORT=8080
+EnvironmentFile=/opt/systemd-manager/backend/.env
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=systemd-manager
+
+# Security
+NoNewPrivileges=false
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

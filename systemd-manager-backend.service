@@ -1,0 +1,27 @@
+[Unit]
+Description=SystemD Manager Backend Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/systemd-manager/backend
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=systemd-manager-backend
+
+# Variables de entorno
+Environment="NODE_ENV=production"
+Environment="PORT=8080"
+Environment="JWT_SECRET=change_this_secret_key_in_production"
+Environment="DEFAULT_USER=admin"
+Environment="DEFAULT_PASSWORD=admin123"
+
+# Límites de recursos
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
