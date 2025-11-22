@@ -12,67 +12,6 @@ const api = axios.create({
   }
 });
 
-// Interceptor para agregar token a las peticiones
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Interceptor para manejar errores de autenticación
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
-// ============================================
-// Autenticación
-// ============================================
-
-export const login = async (username, password) => {
-  const response = await api.post('/auth/login', { username, password });
-  
-  if (response.data.token) {
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
-  }
-  
-  return response.data;
-};
-
-export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-};
-
-export const verifyToken = async () => {
-  const response = await api.get('/auth/verify');
-  return response.data;
-};
-
-export const isAuthenticated = () => {
-  return !!localStorage.getItem('token');
-};
-
-export const getCurrentUser = () => {
-  const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
-};
-
 // ============================================
 // Servicios
 // ============================================
@@ -155,14 +94,6 @@ export class LogsWebSocket {
         this.ws.onopen = () => {
           console.log('WebSocket conectado');
           this.reconnectAttempts = 0;
-          
-          // Autenticar
-          const token = localStorage.getItem('token');
-          this.ws.send(JSON.stringify({
-            type: 'auth',
-            token
-          }));
-          
           resolve();
         };
         
@@ -189,7 +120,6 @@ export class LogsWebSocket {
         this.ws.onclose = () => {
           console.log('WebSocket cerrado');
           
-          // Intentar reconectar
           if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             console.log(`Intentando reconectar (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);

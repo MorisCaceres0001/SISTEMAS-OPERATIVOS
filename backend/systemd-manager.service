@@ -1,0 +1,18 @@
+[Unit]
+Description=SystemD Manager Backend (runs as deploy user)
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/opt/systemd-manager/backend
+EnvironmentFile=/opt/systemd-manager/backend/.env
+ExecStart=/opt/systemd-manager/backend/bin/start.sh
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=systemd-manager-backend
+
+[Install]
+WantedBy=multi-user.target

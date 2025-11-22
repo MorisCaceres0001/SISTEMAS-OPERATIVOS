@@ -5,9 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const WebSocket = require('ws');
 const http = require('http');
-const authRoutes = require('./routes/auth');
 const servicesRoutes = require('./routes/services');
-const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,19 +21,16 @@ app.use(cors({
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100 // límite de 100 requests por ventana
+  windowMs: 15 * 60 * 1000,
+  max: 100
 });
 app.use('/api/', limiter);
 
 // Parseo de JSON
 app.use(express.json());
 
-// Rutas públicas
-app.use('/api/auth', authRoutes);
-
-// Rutas protegidas
-app.use('/api/services', authenticateToken, servicesRoutes);
+// Rutas de servicios (sin autenticación)
+app.use('/api/services', servicesRoutes);
 
 // Ruta de health check
 app.get('/api/health', (req, res) => {
@@ -51,16 +46,9 @@ wss.on('connection', (ws, req) => {
       const data = JSON.parse(message);
       
       if (data.type === 'subscribe' && data.service) {
-        // Verificar token (básico, en producción usar mejor validación)
-        if (!data.token) {
-          ws.send(JSON.stringify({ error: 'Token requerido' }));
-          return;
-        }
-        
         const { exec } = require('child_process');
         const serviceName = data.service.replace(/[^a-zA-Z0-9._-]/g, '');
         
-        // Iniciar stream de logs
         const logProcess = exec(`journalctl -u ${serviceName} -f --no-pager`);
         
         logProcess.stdout.on('data', (data) => {
@@ -78,10 +66,9 @@ wss.on('connection', (ws, req) => {
           }));
         });
         
-        // Cleanup al cerrar
         ws.on('close', () => {
           logProcess.kill();
-          console.log('Conexión WebSocket cerrada, proceso terminado');
+          console.log('Conexión WebSocket cerrada');
         });
       }
     } catch (error) {
