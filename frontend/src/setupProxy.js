@@ -12,9 +12,10 @@ module.exports = function(app) {
     })
   );
 
-  // If you have websocket endpoint under a different path, add it here.
+  // WebSocket endpoint for service logs. Use a distinct path to avoid
+  // colliding with webpack-dev-server's HMR socket which also uses `/ws`.
   app.use(
-    '/ws',
+    '/logs-ws',
     createProxyMiddleware({
       target: 'ws://localhost:8080',
       ws: true,

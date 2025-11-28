@@ -62,9 +62,11 @@ function ServiceDetail() {
 
   const connectWebSocket = () => {
     const token = localStorage.getItem('token');
-    // Prefer explicit env var; otherwise use current origin and the `/ws` path
+    // Prefer explicit env var; otherwise use the proxied path `/logs-ws` so CRA
+    // forwards the WebSocket to the backend. This avoids HMR socket collisions
+    // while keeping the request relative to the frontend origin.
     const wsUrl = process.env.REACT_APP_WS_URL ||
-      (window.location.origin.replace(/^http/, 'ws') + '/ws');
+      (window.location.origin.replace(/^http/, 'ws') + '/logs-ws');
 
     wsRef.current = new WebSocket(wsUrl);
 

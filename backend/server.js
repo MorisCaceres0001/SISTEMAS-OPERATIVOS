@@ -118,6 +118,7 @@ wss.on('connection', (ws, req) => {
   
   ws.on('message', (message) => {
     try {
+      console.log('WS message received:', typeof message === 'string' ? message : '<binary>');
       const data = JSON.parse(message);
       
       if (data.type === 'subscribe' && data.service) {
