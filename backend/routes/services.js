@@ -38,25 +38,40 @@ router.get('/', async (req, res) => {
       return res.status(500).json({ error: 'Error al listar servicios', details: result.error });
     }
 
+    // Parse lines robustly: some lines may start with bullet markers (e.g. '●')
+    const parseUnitLine = (line) => {
+      const parts = line.trim().split(/\s+/);
+
+      // If the first token is a non-alphanumeric marker (like '●' or '○'), shift indexes
+      let idx = 0;
+      if (parts[0] && parts[0].length === 1 && /[^a-zA-Z0-9._@-]/.test(parts[0])) {
+        idx = 1;
+      }
+
+      const name = parts[idx] || '';
+      const load = parts[idx + 1] || '';
+      const active = parts[idx + 2] || '';
+      const sub = parts[idx + 3] || '';
+      const description = parts.slice(idx + 4).join(' ');
+
+      return { name, load, active, sub, description };
+    };
+
     const services = result.stdout
       .split('\n')
       .filter(line => line.trim())
       .map(line => {
-        const parts = line.trim().split(/\s+/);
-        const name = parts[0];
-        const load = parts[1];
-        const active = parts[2];
-        const sub = parts[3];
-        const description = parts.slice(4).join(' ');
+        const parsed = parseUnitLine(line);
+        const rawName = parsed.name;
 
         return {
-          name: name.replace('.service', ''),
-          fullName: name,
-          load,
-          active,
-          sub,
-          description,
-          status: active === 'active' ? 'running' : 'stopped'
+          name: rawName.replace('.service', ''),
+          fullName: rawName,
+          load: parsed.load,
+          active: parsed.active,
+          sub: parsed.sub,
+          description: parsed.description,
+          status: parsed.active === 'active' ? 'running' : 'stopped'
         };
       });
 
@@ -76,18 +91,32 @@ router.get('/active', async (req, res) => {
       return res.status(500).json({ error: 'Error al listar servicios activos', details: result.error });
     }
 
+    const parseUnitLine = (line) => {
+      const parts = line.trim().split(/\s+/);
+      let idx = 0;
+      if (parts[0] && parts[0].length === 1 && /[^a-zA-Z0-9._@-]/.test(parts[0])) {
+        idx = 1;
+      }
+      const name = parts[idx] || '';
+      const load = parts[idx + 1] || '';
+      const active = parts[idx + 2] || '';
+      const sub = parts[idx + 3] || '';
+      const description = parts.slice(idx + 4).join(' ');
+      return { name, load, active, sub, description };
+    };
+
     const services = result.stdout
       .split('\n')
       .filter(line => line.trim())
       .map(line => {
-        const parts = line.trim().split(/\s+/);
+        const p = parseUnitLine(line);
         return {
-          name: parts[0].replace('.service', ''),
-          fullName: parts[0],
-          load: parts[1],
-          active: parts[2],
-          sub: parts[3],
-          description: parts.slice(4).join(' ')
+          name: p.name.replace('.service', ''),
+          fullName: p.name,
+          load: p.load,
+          active: p.active,
+          sub: p.sub,
+          description: p.description
         };
       });
 
@@ -106,18 +135,32 @@ router.get('/inactive', async (req, res) => {
       return res.status(500).json({ error: 'Error al listar servicios inactivos', details: result.error });
     }
 
+    const parseUnitLine = (line) => {
+      const parts = line.trim().split(/\s+/);
+      let idx = 0;
+      if (parts[0] && parts[0].length === 1 && /[^a-zA-Z0-9._@-]/.test(parts[0])) {
+        idx = 1;
+      }
+      const name = parts[idx] || '';
+      const load = parts[idx + 1] || '';
+      const active = parts[idx + 2] || '';
+      const sub = parts[idx + 3] || '';
+      const description = parts.slice(idx + 4).join(' ');
+      return { name, load, active, sub, description };
+    };
+
     const services = result.stdout
       .split('\n')
       .filter(line => line.trim())
       .map(line => {
-        const parts = line.trim().split(/\s+/);
+        const p = parseUnitLine(line);
         return {
-          name: parts[0].replace('.service', ''),
-          fullName: parts[0],
-          load: parts[1],
-          active: parts[2],
-          sub: parts[3],
-          description: parts.slice(4).join(' ')
+          name: p.name.replace('.service', ''),
+          fullName: p.name,
+          load: p.load,
+          active: p.active,
+          sub: p.sub,
+          description: p.description
         };
       });
 

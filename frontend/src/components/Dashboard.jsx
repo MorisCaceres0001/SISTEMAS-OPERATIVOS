@@ -178,7 +178,12 @@ export default function Dashboard() {
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex justify-between items-center">
             <span>{error}</span>
-            <button onClick={() => setError('')} className="text-red-500 hover:text-red-700">
+            <button
+              onClick={() => setError('')}
+              className="text-red-500 hover:text-red-700"
+              title="Cerrar alerta"
+              aria-label="Cerrar alerta"
+            >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -279,8 +284,11 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredServices.map((service) => (
-                    <tr key={service.name} className="hover:bg-gray-50 transition-colors">
+                  {filteredServices.map((service, idx) => (
+                      <tr
+                        key={`${service.name || service.unit || 'service'}-${idx}`}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className={`w-3 h-3 rounded-full ${getStatusColor(service.active)} mr-2`}></div>

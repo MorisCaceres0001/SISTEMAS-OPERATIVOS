@@ -1,7 +1,11 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8081';
+// Use Create React App environment variables (REACT_APP_*) so
+// `npm start` (react-scripts) reads them correctly.
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+// Backend exposes WebSocket on the same port as HTTP by default (8080)
+// align default to ws://localhost:8080; override with REACT_APP_WS_URL if needed.
+const WS_URL = process.env.REACT_APP_WS_URL || 'ws://localhost:8080';
 
 // Crear instancia de axios
 const api = axios.create({
@@ -10,6 +14,34 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   }
+});
+
+// Simple retry logic for 429 responses (exponential backoff).
+api.interceptors.response.use(undefined, async (error) => {
+  const config = error.config || {};
+
+  if (!config || !config.url) return Promise.reject(error);
+
+  const status = error.response ? error.response.status : null;
+
+  if (status === 429) {
+    config._retryCount = config._retryCount || 0;
+
+    if (config._retryCount >= 5) {
+      return Promise.reject(error);
+    }
+
+    config._retryCount += 1;
+
+    // Exponential backoff: 500ms * 2^(retryCount-1)
+    const delay = 500 * Math.pow(2, config._retryCount - 1);
+
+    await new Promise((res) => setTimeout(res, delay));
+
+    return api(config);
+  }
+
+  return Promise.reject(error);
 });
 
 // ============================================

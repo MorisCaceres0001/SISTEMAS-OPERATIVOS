@@ -297,8 +297,8 @@ function Dashboard() {
                       </td>
                     </tr>
                   ) : (
-                    filteredServices.map((service) => (
-                      <tr key={service.name} className="hover:bg-gray-50 transition-colors">
+                    filteredServices.map((service, idx) => (
+                      <tr key={`${service.name || service.unit || 'service'}-${idx}`} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="text-sm font-medium text-gray-900">{service.name}</div>

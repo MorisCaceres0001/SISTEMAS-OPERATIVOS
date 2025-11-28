@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+// En desarrollo recomendamos usar rutas relativas para aprovechar el `proxy`
+// configurado en `frontend/package.json` (evita problemas CORS). En producción
+// puedes establecer `REACT_APP_API_URL` a la URL completa del backend.
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 // Configuración de axios
 const api = axios.create({

@@ -256,8 +256,8 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredServices.map((service) => (
-                    <tr key={service.name} className="hover:bg-gray-50 transition-colors">
+                  {filteredServices.map((service, idx) => (
+                    <tr key={`${service.name || service.unit || 'service'}-${idx}`} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className={`w-3 h-3 rounded-full ${getStatusColor(service.active)} mr-2`}></div>

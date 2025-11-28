@@ -71,8 +71,8 @@ const ServiceTable = ({ services, onAction, onViewDetails, onViewLogs }) => {
                   </td>
                 </tr>
               ) : (
-                services.map((service) => (
-                  <tr key={service.name} className="hover:bg-gray-50">
+                services.map((service, idx) => (
+                  <tr key={`${service.name || service.unit || 'service'}-${idx}`} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{service.name}</div>
                     </td>
