@@ -14,7 +14,13 @@ function sanitizeServiceName(name) {
 // Función para ejecutar comandos de systemctl de forma segura
 async function executeSystemctl(command) {
   try {
-    const { stdout, stderr } = await execPromise(command, {
+    // If configured, prefix systemctl/journalctl with sudo so the backend can run
+    // privileged commands while the process runs as a less-privileged user.
+    const useSudo = process.env.USE_SUDO_FOR_SYSTEMCTL === 'true';
+    const needsSudo = /^(systemctl|journalctl)\b/.test(command);
+    const finalCommand = (useSudo && needsSudo) ? `sudo ${command}` : command;
+
+    const { stdout, stderr } = await execPromise(finalCommand, {
       timeout: 10000, // 10 segundos timeout
       maxBuffer: 1024 * 1024 * 5 // 5MB buffer
     });

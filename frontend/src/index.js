@@ -3,11 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import ErrorBoundary from './components/ErrorBoundary';
+import Dashboard from './components/Dashboard';
+import ServiceDetail from './components/ServiceDetail';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const router = createBrowserRouter(
   [
-    { path: '/', element: <App /> }
+    { path: '/', element: <App />, errorElement: <ErrorBoundary /> },
+    { path: '/dashboard', element: <Dashboard />, errorElement: <ErrorBoundary /> },
+    { path: '/service/:serviceName', element: <ServiceDetail />, errorElement: <ErrorBoundary /> }
   ],
   {
     future: {

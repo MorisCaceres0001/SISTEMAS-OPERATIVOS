@@ -62,8 +62,10 @@ function ServiceDetail() {
 
   const connectWebSocket = () => {
     const token = localStorage.getItem('token');
-    const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:8080';
-    
+    // Prefer explicit env var; otherwise use current origin and the `/ws` path
+    const wsUrl = process.env.REACT_APP_WS_URL ||
+      (window.location.origin.replace(/^http/, 'ws') + '/ws');
+
     wsRef.current = new WebSocket(wsUrl);
 
     wsRef.current.onopen = () => {
